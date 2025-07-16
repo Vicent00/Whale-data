@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  wallet    String   @unique
+  email     String?  @unique
+  username  String?  @unique
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User preferences
+  preferences UserPreferences?
+
+  // User alerts
+  alerts Alert[]
+
+  // User's followed whales
+  followedWhales FollowedWhale[]
+
+  @@map("users")
+}
+
+model UserPreferences {
+  id                String @id @default(cuid())
+  userId            String @unique
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Display preferences
+  defaultChain      String @default("ethereum")
+  currency          String @default("USD")
+  timezone          String @default("UTC")
+  
+  // Notification preferences
+  emailNotifications Boolean @default(true)
+  pushNotifications  Boolean @default(true)
+  
+  // UI preferences
+  theme             String @default("dark")
+  compactMode       Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_preferences")
+}
+
+model Whale {
+  id          String   @id @default(cuid())
+  address     String   @unique
+  name        String?
+  description String?
+  tags        String[] // Array of tags like "defi", "nft", "yield-farming"
+  
+  // Metrics
+  totalVolume    Float @default(0)
+  totalTrades    Int  @default(0)
+  avgTradeSize   Float @default(0)
+  successRate    Float @default(0)
+  
+  // Social metrics
+  followersCount Int @default(0)
+  
+  // Status
+  isActive    Boolean @default(true)
+  isVerified  Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  transactions Transaction[]
+  followedBy   FollowedWhale[]
+
+  @@map("whales")
+}
+
+model FollowedWhale {
+  id        String   @id @default(cuid())
+  userId    String
+  whaleId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  whale Whale @relation(fields: [whaleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, whaleId])
+  @@map("followed_whales")
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  txHash      String   @unique
+  whaleId     String
+  whale       Whale    @relation(fields: [whaleId], references: [id])
+  
+  // Transaction details
+  chain       String   // ethereum, bsc, polygon
+  protocol    String   // uniswap, sushiswap, etc.
+  type        String   // swap, transfer, stake, etc.
+  
+  // Token details
+  tokenIn     String?
+  tokenOut    String?
+  amountIn    Float?
+  amountOut   Float?
+  amountInUSD Float?
+  amountOutUSD Float?
+  
+  // Transaction metadata
+  blockNumber Int
+  timestamp   DateTime
+  gasUsed     Float?
+  gasPrice    Float?
+  
+  // Status
+  status      String @default("confirmed") // confirmed, failed, pending
+  
+  createdAt DateTime @default(now())
+
+  @@map("transactions")
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Alert configuration
+  type      String   // volume_threshold, whale_activity, price_movement
+  whaleId   String?
+  whale     Whale?   @relation(fields: [whaleId], references: [id])
+  
+  // Thresholds
+  minVolume     Float?
+  minTradeSize  Float?
+  
+  // Notification settings
+  emailEnabled  Boolean @default(true)
+  pushEnabled   Boolean @default(true)
+  
+  // Status
+  isActive      Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("alerts")
+}
+
+model WhaleMetrics {
+  id        String   @id @default(cuid())
+  whaleId   String
+  whale     Whale    @relation(fields: [whaleId], references: [id], onDelete: Cascade)
+  
+  // Daily metrics
+  date      DateTime
+  volume    Float
+  trades    Int
+  avgTradeSize Float
+  
+  createdAt DateTime @default(now())
+
+  @@unique([whaleId, date])
+  @@map("whale_metrics")
+} 
