@@ -1,19 +1,21 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './components/Providers'
-import { Navbar } from './components/Navbar'
-import { Sidebar } from './components/Sidebar'
-import { AuthGuard } from './components/AuthGuard'
+
 
 const inter = Inter({ subsets: ['latin'] })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   title: 'Whale Data - Social Trading DeFi Platform',
   description: 'Follow whale traders and get real-time notifications on their activities',
   keywords: 'defi, social trading, whale tracking, blockchain, ethereum, polygon, bsc',
   authors: [{ name: 'Whale Data Team' }],
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
   openGraph: {
     title: 'Whale Data - Social Trading DeFi Platform',

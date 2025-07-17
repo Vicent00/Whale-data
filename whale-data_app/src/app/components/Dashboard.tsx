@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { TrendingUp, TrendingDown, Users, Activity, DollarSign, AlertTriangle } from 'lucide-react'
+import { TrendingUp, TrendingDown, DollarSign, Users, Activity, AlertTriangle } from 'lucide-react'
 import { WhaleCard } from './WhaleCard'
 import { TransactionCard } from './TransactionCard'
 import { VolumeChart } from './VolumeChart'
 import { WalletStatus } from './WalletStatus'
-import { WalletTest } from './WalletTest'
 import { Whale, Transaction } from '../../types'
 
 // Mock data for demonstration
@@ -143,9 +142,6 @@ export function Dashboard() {
 
       {/* Wallet Status */}
       <WalletStatus />
-
-      {/* Wallet Test */}
-      <WalletTest />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

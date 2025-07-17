@@ -1,7 +1,6 @@
 'use client'
 
 import { useAuth } from '../../hooks/useAuth'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { Wallet, Lock, ArrowRight } from 'lucide-react'
 
 interface AuthGuardProps {
@@ -48,10 +47,6 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
               <p className="text-gray-400 text-sm">
                 Access real-time whale tracking, analytics, and alerts
               </p>
-            </div>
-
-            <div className="flex justify-center mb-6">
-              <ConnectButton />
             </div>
 
             <div className="space-y-3 text-sm text-gray-400">

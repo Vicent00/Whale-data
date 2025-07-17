@@ -1,0 +1,1 @@
+Coger y probar diferentes configuraciones ya que el problema es que no wallet cloud id crear un proyecto nuevo y cogerlo y sino funcoina pues coger y probar
