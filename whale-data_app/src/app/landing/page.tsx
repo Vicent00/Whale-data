@@ -3,8 +3,46 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { ArrowRight, TrendingUp, Users, Activity, Bell, Shield } from 'lucide-react'
 import Link from 'next/link'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function LandingPage() {
+  const router = useRouter()
+  const { isConnected, isConnecting } = useAuth()
+
+  // Redirect to dashboard if already connected
+  useEffect(() => {
+    if (isConnected && !isConnecting) {
+      console.log(' Landing - User already connected, redirecting to dashboard')
+      router.push('/dashboard')
+    }
+  }, [isConnected, isConnecting, router])
+
+  // Show loading while connecting
+  if (isConnecting) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Connecting wallet...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show loading if already connected
+  if (isConnected) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Header */}
@@ -34,14 +72,14 @@ export default function LandingPage() {
           </p>
           <div className="flex justify-center space-x-4">
             <Link
-              href="/"
+              href="/dashboard"
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2"
             >
               <span>Get Started</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/"
+              href="/dashboard"
               className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center space-x-2"
             >
               <span>Explore Platform</span>
@@ -106,4 +144,4 @@ export default function LandingPage() {
       </footer>
     </div>
   )
-} 
+}

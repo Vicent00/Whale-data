@@ -1,7 +1,11 @@
 'use client'
 
 import { useAuth } from '../../hooks/useAuth'
-import { Wallet, Lock, ArrowRight } from 'lucide-react'
+import { Wallet, Lock, ArrowRight, ArrowLeft } from 'lucide-react'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Link from 'next/link'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -10,6 +14,15 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const { isConnected, isConnecting } = useAuth()
+  const router = useRouter()
+
+  // Redirect to dashboard when connected
+  useEffect(() => {
+    if (isConnected && !isConnecting) {
+      console.log(' AuthGuard - Wallet connected, redirecting to dashboard')
+      router.push('/dashboard')
+    }
+  }, [isConnected, isConnecting, router])
 
   // Show loading state while connecting
   if (isConnecting) {
@@ -28,6 +41,17 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="max-w-md w-full mx-auto p-6">
+          {/* Back to Landing Button */}
+          <div className="mb-6">
+            <Link
+              href="/landing"
+              className="inline-flex items-center text-gray-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              <span>Back to Landing</span>
+            </Link>
+          </div>
+
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-white" />
@@ -44,9 +68,14 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
               <h2 className="text-lg font-semibold text-white mb-2">
                 Connect Your Wallet
               </h2>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-sm mb-6">
                 Access real-time whale tracking, analytics, and alerts
               </p>
+              
+              {/* Connect Button */}
+              <div className="flex justify-center mb-6">
+                <ConnectButton />
+              </div>
             </div>
 
             <div className="space-y-3 text-sm text-gray-400">
@@ -77,4 +106,4 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   // Show protected content if connected
   return <>{children}</>
-} 
+}
